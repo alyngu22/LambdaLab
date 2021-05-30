@@ -25,8 +25,8 @@ public class Console {
             input = s.nextLine();
         }
         System.out.printf("Goodbye!");
+        print ("HI");
     }
-
     public static String parse(ArrayList<String> tokens) {
         if (tokens.size() == 1) {
             Variable v = new Variable(tokens.get(0));
