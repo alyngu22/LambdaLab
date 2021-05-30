@@ -46,7 +46,7 @@ public class Console {
                             left.add(tokens.get(i));
                         }
                         if (tokens.lastIndexOf("(") != 0) {
-                            for (int j = tokens.lastIndexOf("(") -1; j < tokens.size() -1 ; j++) {
+                            for (int j = tokens.lastIndexOf("(")  + 1; j < tokens.size() -1 ; j++) {
                                 right.add(tokens.get(j));
                             }
                         }
