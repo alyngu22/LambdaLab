@@ -40,6 +40,7 @@ public class Console {
                 }
                 else {
                     ArrayList<String> left = new ArrayList<String>();
+                    ArrayList<String> right = new ArrayList<String>();
                     for (int i = 0; i < tokens.size() - 1; i++) {
                         left.add(tokens.get(i));
                     }
