@@ -27,6 +27,10 @@ public class Console {
         System.out.printf("Goodbye!");
     }
     public static Expression parse(ArrayList<String> tokens) {
+        for (String x: tokens) {
+            System.out.println(x);
+        }
+        System.out.println();
         if (tokens.size() == 1) {
             Variable v = new Variable(tokens.get(0));
             return v;
