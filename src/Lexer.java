@@ -16,7 +16,7 @@ public class Lexer {
         input = input.replaceAll( "\\)", " ) ");
         input = input.replaceAll( "\\\\", " \\\\ ");
         input = input.replaceAll( "\\.", " . ");
-        input = input.replaceAll("λ", " λ ");
+        input = input.replaceAll("λ", " \\\\ ");
 
         input = input.trim();
         StringTokenizer st = new StringTokenizer(input);
