@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.util.ArrayList;
 
-public interface Expression {
+public interface Expression{
     public String toString ();
 }
 
@@ -14,7 +14,7 @@ class Function implements Expression{
     }
     @Override
     public String toString () {
-        return "(λ" + this.var + "." + this.ex;
+        return "(λ" + this.var + "." + this.ex + ")";
     }
 
 
