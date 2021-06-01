@@ -24,15 +24,15 @@ class Function implements Expression{
 }
 
 class Application implements Expression{
-    private String left;
-    private String right;
-    public Application(String left, String right) {
+    private Expression left;
+    private Expression right;
+    public Application(Expression left, Expression right) {
         this.left = left;
         this.right = right;
     }
     @Override
     public String toString() {
-        return "(" + this.left + " " + this.right + ")";
+        return "(" + this.left.toString() + " " + this.right.toString() + ")";
     }
 //has a left and a right
 
