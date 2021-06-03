@@ -12,6 +12,12 @@ class Function implements Expression{
         this.var = v;
         this.ex = e;
     }
+    public Expression getEx(){
+        return this.ex;
+    }
+    public Variable getVar(){
+        return this.var;
+    }
     @Override
     public String toString () {
         return "(λ" + this.var + "." + this.ex + ")";
@@ -29,6 +35,12 @@ class Application implements Expression{
     public Application(Expression left, Expression right) {
         this.left = left;
         this.right = right;
+    }
+    public Expression getLeft(){
+        return this.left;
+    }
+    public Expression getRight(){
+        return this.right;
     }
     @Override
     public String toString() {
