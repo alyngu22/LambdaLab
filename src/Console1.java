@@ -32,8 +32,12 @@ public class Console1 {
                             Expression e = ((Function) ((Application) expression).getLeft()).getEx();
                             Expression v = ((Function) ((Application) expression).getLeft()).getVar();
                             if(e instanceof Variable){
-
-                                runProduct = ((Application) expression).getRight();
+                                if(e.toString().equals(v.toString())){
+                                    runProduct = ((Application) expression).getRight();
+                                }
+                                else{
+                                    runProduct = e;
+                                }
                             }
                             else if(e instanceof Application){
                                 String checkForVar = e.toString();
