@@ -1,6 +1,8 @@
 import java.util.ArrayList;
+import java.lang.Object;
+import java.util.HashMap;
 
-public class Parser {
+public class Parser1 {
     public static Expression parse (ArrayList<String> tokens) {
             ArrayList<Expression> exArr = new ArrayList<Expression>();
             for (int i = 0; i < tokens.size(); i++) {
@@ -65,27 +67,27 @@ public class Parser {
             for(int i = tokens.indexOf("run") + 1; i < tokens.size(); i++){
                 a.add(tokens.get(i));
             }
-
             Expression expression = parse(a);
 
             Expression runProduct = null;
 
             if(expression.getClass() == Application.class){
                 if(((Application) expression).getLeft() instanceof Function){
-                    Integer posOfRight = ((Application) expression).toString().indexOf(((Application) expression).getRight().toString());
+                    HashMap<Object, Object> variables = new HashMap<>();
                     Expression e = ((Function) ((Application) expression).getLeft()).getEx();
                     Expression v = ((Function) ((Application) expression).getLeft()).getVar();
                     if(e instanceof Variable){
-                        if(e.toString().equals(v.toString())){
-                            ((Function) ((Application) expression).getLeft()).setEx(((Application) expression).getRight());
-                            //runProduct = ((Application) expression).getRight();
-                        }
-                        runProduct = ((Function) ((Application) expression).getLeft()).getEx();
-                        /*else{
+                        if(e == v){
                             runProduct = e;
-                        }*/
+                        }
+                        else{
+                            runProduct = ((Application) expression).getRight();
+                        }
                     }
                     else if(e instanceof Application){
+                        if(((Application) e).getLeft() instanceof Function){
+
+                        }
                         if(((Application) e).getLeft().toString().equals(v.toString())){
                             ((Application) e).setLeft(((Application) expression).getRight());
                             if(((Application) expression).getRight() instanceof Function){
@@ -100,8 +102,7 @@ public class Parser {
                     }
 
                     if(e instanceof Function){
-                        //function
-                        System.out.println("function");
+
                     }
                     else{
                         //look for the bound variable and replace with right side
