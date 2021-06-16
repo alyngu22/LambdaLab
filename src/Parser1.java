@@ -62,60 +62,13 @@ public class Parser1 {
     public static void runAndStore(ArrayList<String> tokens, ArrayList<Variable> vars, ArrayList<String> varNames, ArrayList<Expression> values){
         //running
         if (tokens.contains("run")){
-
             ArrayList<String> a = new ArrayList<String>();
             for(int i = tokens.indexOf("run") + 1; i < tokens.size(); i++){
                 a.add(tokens.get(i));
             }
             Expression expression = parse(a);
+            Expression runProduct = run(expression);
 
-            Expression runProduct = null;
-
-            if(expression.getClass() == Application.class){
-                if(((Application) expression).getLeft() instanceof Function){
-                    HashMap<Object, Object> variables = new HashMap<>();
-                    Expression e = ((Function) ((Application) expression).getLeft()).getEx();
-                    Expression v = ((Function) ((Application) expression).getLeft()).getVar();
-                    if(e instanceof Variable){
-                        if(e == v){
-                            runProduct = e;
-                        }
-                        else{
-                            runProduct = ((Application) expression).getRight();
-                        }
-                    }
-                    else if(e instanceof Application){
-                        if(((Application) e).getLeft() instanceof Function){
-
-                        }
-                        if(((Application) e).getLeft().toString().equals(v.toString())){
-                            ((Application) e).setLeft(((Application) expression).getRight());
-                            if(((Application) expression).getRight() instanceof Function){
-                                //if application right is a function, run the function with the right side of function expression.
-                                runAndStore(Lexer.cleanUp("run " + e.toString()), vars, varNames, values);
-                            }
-                        }
-                        else if(((Application) e).getRight().toString().equals(v.toString())){
-                            ((Application) e).setRight(((Application) expression).getRight());
-                        }
-                        runProduct = e;
-                    }
-
-                    if(e instanceof Function){
-
-                    }
-                    else{
-                        //look for the bound variable and replace with right side
-                        //if not there then return expression
-                    }
-                }
-                else {
-                    runProduct = expression;
-                }
-            }
-            else{
-                runProduct = expression;
-            }
             if (tokens.contains("=")) {
                 if (varNames.contains(tokens.get(0))) {
                     System.out.println(tokens.get(0) + " is already defined.");
@@ -165,7 +118,61 @@ public class Parser1 {
             System.out.println(parse(tokens));
         }
     }
-   /* public static Expression run(){
+    public static Expression run(Expression expression){
+        Expression runProduct = null;
 
-    }*/
+        if(expression.getClass() == Application.class){
+            if(((Application) expression).getLeft() instanceof Function){
+                HashMap<Object, Object> variables = new HashMap<>();
+                Expression e = ((Function) ((Application) expression).getLeft()).getEx();
+                Expression v = ((Function) ((Application) expression).getLeft()).getVar();
+                if(e instanceof Variable){
+                    if(e == v){
+                        runProduct = e;
+                    }
+                    else{
+                        runProduct = ((Application) expression).getRight();
+                    }
+                }
+                else if(e instanceof Application){
+                        /*if(((Application) e).getLeft() instanceof Function){
+
+                        }
+                        if(((Application) e).getLeft().toString().equals(v.toString())){
+                            ((Application) e).setLeft(((Application) expression).getRight());
+                            if(((Application) expression).getRight() instanceof Function){
+                                //if application right is a function, run the function with the right side of function expression.
+                                runAndStore(Lexer.cleanUp("run " + e.toString()), vars, varNames, values);
+                            }
+                        }
+                        else if(((Application) e).getRight().toString().equals(v.toString())){
+                            ((Application) e).setRight(((Application) expression).getRight());
+                        }
+                        runProduct = e;*/
+                        //call bound stuff
+
+                }
+
+                if(e instanceof Function){
+                }
+                else{
+                    //look for the bound variable and replace with right side
+                    //if not there then return expression
+                }
+            }
+            else {
+                runProduct = expression;
+            }
+        }
+        else{
+            runProduct = expression;
+        }
+        return runProduct;
+    }
+    public static Expression findVars(Variable variable, Expression expression){
+        if(expression instanceof Function){
+            findVars(variable, ((Function) expression).getEx());
+        }
+
+    }
 }
