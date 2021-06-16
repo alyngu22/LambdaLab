@@ -12,6 +12,7 @@ public class Lexer {
 
 
         input = input.trim();
+        input = input.replaceAll("=", " = ");
         input = input.replaceAll("\\(", " ( ");
         input = input.replaceAll( "\\)", " ) ");
         input = input.replaceAll( "\\\\", " \\\\ ");
