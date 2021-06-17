@@ -142,6 +142,9 @@ public class Calculate {
     public static Expression run(Expression ex) {
         if (ex instanceof Application) {
             Application a = (Application) (ex);
+            if (a.getRight() instanceof Application && ((Application) a.getRight()).getLeft() instanceof Function) {
+                run(a.getRight());
+            }
             if (!(a.getLeft() instanceof Function)) {
                 a.setLeft(run(a.getLeft()));
                 a.setRight(run(a.getRight()));
@@ -156,7 +159,7 @@ public class Calculate {
 
                 if (f.getEx().toString().contains("λ")) {
                     if (f.getEx().toString().substring(f.getEx().toString().indexOf("λ") + 1, f.getEx().toString().indexOf("λ") + 2).equals(f.getVar().toString())) {
-                        String s1 = f.getVar().toString().substring(0, f.getVar().toString().indexOf("λ"));
+                        String s1 = f.getVar().toString().substring(0, f.getEx().toString().indexOf("λ"));
                         s1 = s1.replaceAll(f.getVar().toString(), right.toString());
                         String s2 = f.getEx().toString().substring(f.getEx().toString().indexOf("λ"));
                         return run(Parser2.parse(Lexer.cleanUp(s1 + s2)));
