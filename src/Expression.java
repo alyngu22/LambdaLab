@@ -17,6 +17,10 @@ class Function implements Expression{
         this.ex = ex;
     }
 
+    public void setVar(Variable var) {
+        this.var = var;
+    }
+
     public Expression getEx(){
         return this.ex;
     }
@@ -53,6 +57,7 @@ class Application implements Expression{
     public Expression getLeft(){
         return this.left;
     }
+
     public Expression getRight(){
         return this.right;
     }

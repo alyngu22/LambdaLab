@@ -26,7 +26,7 @@ public class Console1 {
                         computable.add(tokens.get(i));
                     }
                     Expression ex = Parser2.parse(Calculate.substituteVar(computable));
-                    ex = Calculate.run(ex);
+                    ex = Calculate.startRun(ex);
                     ArrayList<String> addable = Lexer.cleanUp(ex.toString());
                     addable.add(0,tokens.get(0));
                     addable.add(1,tokens.get(1));
@@ -41,7 +41,7 @@ public class Console1 {
                         computable.add(tokens.get(i));
                     }
                     Expression ex = Parser2.parse(Calculate.substituteVar(computable));
-                    System.out.println(Calculate.run(ex));
+                    System.out.println(Calculate.startRun(ex));
                 }
                 else if (Calculate.varNames.contains(tokens.get(0))) {
                     System.out.println(Calculate.values.get(Calculate.varNames.indexOf(tokens.get(0))));
