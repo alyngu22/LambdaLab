@@ -40,13 +40,13 @@ public class Console {
                                 }
                             }
                         }
-                        values.add(Parser.parse(equalEx));
+                        values.add(Parser2.parse(equalEx));
                         System.out.println("Added " + values.get(values.size() - 1) + " as " + vars.get(values.size() - 1));
                     }
                 } else if (varNames.contains(tokens.get(0))) {
                     System.out.println(values.get(varNames.indexOf(tokens.get(0))));
                 } else {
-                    System.out.println(Parser.parse(tokens));
+                    System.out.println(Parser2.parse(tokens));
                 }
                 // }
             }

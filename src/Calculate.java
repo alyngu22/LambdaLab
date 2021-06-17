@@ -33,7 +33,7 @@ public class Calculate {
                 equalEx.add(tokens.get(i));
             }
             tokens = substituteVar(equalEx);
-            values.add(Parser.parse(tokens));
+            values.add(Parser2.parse(tokens));
             return "Added " + values.get(values.size() - 1) + " as " + vars.get(values.size() - 1);
         }
     }
