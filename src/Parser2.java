@@ -60,7 +60,7 @@ public class Parser2 {
         }
     }
 
-    public static Expression compute(Expression ex) {
+   /* public static Expression compute(Expression ex) {
         if (ex instanceof Application) {
             Expression aLeft = compute(((Application) ex).getLeft());
             Expression aRight = compute(((Application) ex).getRight());
@@ -72,31 +72,52 @@ public class Parser2 {
         return null;
     }
 
+    */
+
+    public static Expression substituteBound (Expression ex, ArrayList<Variable> list) {
+        if (ex instanceof  Application) {
+            substituteBound(((Application) ex).getLeft(),list);
+            substituteBound(((Application) ex).getRight(),list);
+        }
+        else if (ex instanceof Function) {
+            substituteBound(((Function) ex).getVar(),list);
+            substituteBound(((Function) ex).getEx(),list);
+        }
+        else {
+            for (Variable v: list) {
+                if (v.toString().equals(ex.toString())) {
+                    ((Variable)ex).setName(ex.toString() + "1");
+                }
+            }
+        }
+        return ex;
+    }
+    public static ArrayList<Variable> getDifference (ArrayList<Variable> oldList, ArrayList<Variable> newList) {
+        ArrayList<Variable> ret = new ArrayList<>();
+        boolean contains = false;
+        for (Variable v: newList) {
+            for (Variable v1: oldList) {
+                if (v1.toString().equals(v.toString())) {
+                    contains = true;
+                }
+            }
+            if (!contains) {
+                ret.add(v);
+            }
+            contains = false;
+        }
+        return ret;
+    }
+
     public static ArrayList<Variable> getVRight(Expression expression, ArrayList<Variable> varList) {
         if (expression instanceof Application) {
             ArrayList<Variable> varListLeft = getVRight(((Application) expression).getLeft(), varList);
             ArrayList<Variable> varListRight = getVRight(((Application) expression).getRight(), varList);
-            ArrayList<Variable> tempList = new ArrayList<>();
-            boolean contains = false;
-            for (Variable v : varListLeft) {
-                for (Variable v1 : varList) {
-                    if (!contains & !(v.toString().equals(v1.toString()))) {
-                        tempList.add(v);
-                        contains = true;
-                    }
-                }
-                contains = false;
-            }
-            for (Variable v : varListRight) {
-                for (Variable v1 : varList) {
-                    if (!contains & !(v.toString().equals(v1.toString()))) {
-                        tempList.add(v);
-                        contains = true;
-                    }
-                }
-                contains = false;
-            }
-            varList.addAll(tempList);
+            ArrayList<Variable> tempListLeft = getDifference(varList,varListLeft);
+            ArrayList<Variable> tempListRight = getDifference(varList,varListRight);
+
+            varList.addAll(tempListLeft);
+            varList.addAll(tempListRight);
         }
         else if (expression instanceof Function) {
             boolean contains = false;
@@ -107,17 +128,8 @@ public class Parser2 {
             if (!contains)
                 varList.add(((Function) expression).getVar());
 
-            ArrayList<Variable> varListRight = getVRight(((Function) expression).getEx(),varList);
-            ArrayList<Variable> tempList = new ArrayList<>();
-            for (Variable v: varListRight) {
-                for (Variable v1 : varList) {
-                    if (!contains & !(v.toString().equals(v1.toString()))) {
-                        tempList.add(v);
-                        contains = true;
-                    }
-                }
-                contains = false;
-            }
+            ArrayList<Variable> varListEx = getVRight(((Function) expression).getEx(),varList);
+            ArrayList<Variable> tempList = getDifference(varList,varListEx);
             varList.addAll(tempList);
         }
         else {
@@ -133,16 +145,38 @@ public class Parser2 {
         return varList;
     }
 
+
+//    \a.\b.\c.(a b c) e f
+  //var = a
+    //ex = \b.\c.( a b c) e
+    //input = f
+    public static Expression compute (String var, Expression ex, Expression input) {
+        if (ex instanceof Application) {
+            compute(var, ((Application) ex).getLeft(), input);
+            compute(var, ((Application) ex).getRight(), input);
+        }
+        else if (ex instanceof Function) {
+            compute(var,((Function) ex).getEx(),input);
+        }
+        else {
+            if (ex.)
+        }
+
+    }
+
+
+            (\a.\b.(a b)) (\x.x)
+
+
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
         String input = s.nextLine();
         ArrayList<String> tokens;
         tokens = Lexer.cleanUp(input);
         Expression ex = Parser.parse(tokens);
-        ArrayList<Variable> vEmpty = new ArrayList<>();
-        ArrayList<Variable> vList = getVRight(ex,vEmpty);
-        for (Variable v: vList) {
-            System.out.println(v);
+        ArrayList<Variable> rightVars = getVRight(((Application)ex).getRight(),new ArrayList<>());
+        System.out.println(substituteBound(((Application) ex).getLeft(),rightVars));
+
         }
     }
-}
+

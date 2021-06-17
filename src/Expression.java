@@ -81,8 +81,9 @@ class Variable implements Expression {
         return cpy;
     }
 
-
-
+    public void setName(String name) {
+        this.name = name;
+    }
 }
 
 
