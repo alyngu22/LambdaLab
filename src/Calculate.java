@@ -1,65 +1,42 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
-public class Parser {
-    public static Expression parse (ArrayList<String> tokens) {
-        ArrayList<Expression> exArr = new ArrayList<Expression>();
-        for (int i = 0; i < tokens.size(); i ++) {
-            if (tokens.get(0).equals("\\")) {
-                ArrayList<String> ex = new ArrayList<String>();
-                Variable v = new Variable(tokens.get(1));
-                for (int j = 3; j < tokens.size(); j++) {
-                    ex.add(tokens.get(j));
-                }
-                tokens.clear();
-                exArr.add(new Function(v,parse(ex)));
+public class Calculate {
+    public static ArrayList<Variable> vars = new ArrayList<Variable>();
+    public static ArrayList<String> varNames = new ArrayList<String>();
+    public static ArrayList<Expression> values = new ArrayList<Expression>();
 
-            }
-            else if (tokens.get(0).equals("(")) {
-                int parens = 1;
-                int pIndex = -1;
-                ArrayList<String> in = new ArrayList<String>();
-                for (int p = 1; p < tokens.size(); p++) {
-                    if (tokens.get(p).equals("(")) {
-                        parens++;
-                    }
-                    if (parens != 0 && tokens.get(p).equals(")")) {
-                        parens--;
-                        if (parens == 0) {
-                            pIndex = p;
-                            for (int j = 1; j < pIndex; j++) {
-                                in.add(tokens.get(j));
-                            }
-                            for (int j = 1; j < pIndex + 2; j++) {
-                                tokens.remove(0);
-                            }
-                            exArr.add(parse(in));
-                        }
+    public static ArrayList<String> substituteVar(ArrayList<String> tokens) {
+        for (int i = 0; i < varNames.size(); i++) {
+            String var = varNames.get(i);
+            for (int j = 0; j < tokens.size(); j++) {
+                if (tokens.get(j).equals(var)) {
+                    ArrayList<String> valString = Lexer.cleanUp(values.get(i).toString());
+                    tokens.set(j, valString.get(0));
+                    for (int k = 1; k < valString.size(); k++) {
+                        tokens.add(k + j + 1, valString.get(k));
                     }
                 }
             }
-            else {
-                exArr.add(new Variable(tokens.get(0)));
-                tokens.remove(0);
-            }
-            i--;
         }
-        return parseEx(exArr);
+      //  tokens = Lexer.cleanUp(tokens.toString());
+        return tokens;
     }
-
-    public static Expression parseEx(ArrayList<Expression> exArr) {
-        if (exArr.size() == 1) {
-            return exArr.get(0);
+    public static String add (ArrayList<String> tokens) {
+        if (varNames.contains(tokens.get(0))) {
+            return tokens.get(0) + " is already defined.";
         }
         else {
-            ArrayList<Expression> front = new ArrayList<Expression>();
-            for (int i = 0; i < exArr.size() -1; i++) {
-                front.add(exArr.get(i));
+            ArrayList<String> equalEx = new ArrayList<String>();
+            vars.add(new Variable(tokens.get(0)));
+            varNames.add(tokens.get(0));
+            for (int i = tokens.indexOf("=") + 1; i < tokens.size(); i++) {
+                equalEx.add(tokens.get(i));
             }
-            return new Application(parseEx(front), exArr.get(exArr.size()-1));
+            tokens = substituteVar(equalEx);
+            values.add(Parser.parse(tokens));
+            return "Added " + values.get(values.size() - 1) + " as " + vars.get(values.size() - 1);
         }
     }
-
     public static Expression substituteBound (Expression ex, ArrayList<Variable> list) {
         if (ex instanceof  Application) {
             substituteBound(((Application) ex).getLeft(),list);
@@ -131,15 +108,31 @@ public class Parser {
         return varList;
     }
 
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        String input = s.nextLine();
-        ArrayList<String> tokens;
-        tokens = Lexer.cleanUp(input);
-        Expression ex = Parser.parse(tokens);
+    public static Expression compute (String var, Expression ex, Expression input) {
+        if (ex instanceof Application) {
+            Application ret = new Application(compute(var, ((Application) ex).getLeft(), input), compute(var, ((Application) ex).getRight(), input));
+            return new Application(compute(var, ((Application) ex).getLeft(), input), compute(var, ((Application) ex).getRight(), input));
+        }
+        else if (ex instanceof Function) {
+            Expression ret = compute(var,((Function) ex).getEx(),input);
+            return new Function(((Function)ex).getVar(), compute(var,((Function) ex).getEx(),input));
+        }
+        else {
+            if (ex.toString().equals(var)) {
+                return input;
+            }
+            else {
+                return new Variable(ex.toString());
+            }
+        }
+    }
+    public static Expression run(Expression ex) {
         ArrayList<Variable> rightVars = getVRight(((Application)ex).getRight(),new ArrayList<>());
         Expression subbed = new Application (substituteBound(((Application) ex).getLeft(),rightVars),((Application) ex).getRight());
-        System.out.println(subbed);
-
+        Expression calculated = compute(((Function)(((Application)subbed).getLeft())).getVar().toString(),((Function)(((Application)subbed).getLeft())).getEx(),((Application)subbed).getRight());
+        while (calculated instanceof Application && ((Application) calculated).getLeft() instanceof Function) {
+            calculated = compute(((Function)(((Application)calculated).getLeft())).getVar().toString(),((Function)(((Application)calculated).getLeft())).getEx(),((Application)calculated).getRight());
+        }
+        return calculated;
     }
 }

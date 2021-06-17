@@ -18,7 +18,7 @@ public class Console2 {
                 //running
                 if (tokens.contains("run")){
                     Expression ex = Parser2.parse(tokens);
-                    System.out.println(Parser2.compute(ex));
+                   // System.out.println(Parser2.compute(ex));
 
                     /*
                     ArrayList<String> a = new ArrayList<String>();
@@ -83,7 +83,7 @@ public class Console2 {
                 }
                 
                 //adding only
-                else {
+           //    else {
                     if (tokens.contains("=")) {
                         if (varNames.contains(tokens.get(0))) {
                             System.out.println(tokens.get(0) + " is already defined.");
@@ -102,15 +102,15 @@ public class Console2 {
                                     }
                                 }
                             }
-                            values.add(Parser.parse(equalEx));
+                            values.add(Parser2.parse(equalEx));
                             System.out.println("Added " + values.get(values.size() - 1) + " as " + vars.get(values.size() - 1));
                         }
                     } else if (varNames.contains(tokens.get(0))) {
                         System.out.println(values.get(varNames.indexOf(tokens.get(0))));
                     } else {
-                        System.out.println(Parser.parse(tokens));
+                        System.out.println(Parser2.parse(tokens));
                     }
-                }
+               // }
             }
             System.out.print("> ");
             input = s.nextLine();

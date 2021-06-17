@@ -44,7 +44,7 @@ public class Parser2 {
             }
             i--;
         }
-        return parseEx(exArr);
+                return parseEx(exArr);
     }
 
     public static Expression parseEx(ArrayList<Expression> exArr) {
@@ -145,38 +145,52 @@ public class Parser2 {
         return varList;
     }
 
-
-//    \a.\b.\c.(a b c) e f
-  //var = a
-    //ex = \b.\c.( a b c) e
-    //input = f
     public static Expression compute (String var, Expression ex, Expression input) {
         if (ex instanceof Application) {
-            compute(var, ((Application) ex).getLeft(), input);
-            compute(var, ((Application) ex).getRight(), input);
+            Application ret = new Application(compute(var, ((Application) ex).getLeft(), input), compute(var, ((Application) ex).getRight(), input));
+            return new Application(compute(var, ((Application) ex).getLeft(), input), compute(var, ((Application) ex).getRight(), input));
         }
         else if (ex instanceof Function) {
-            compute(var,((Function) ex).getEx(),input);
+            Expression ret = compute(var,((Function) ex).getEx(),input);
+            return new Function(((Function)ex).getVar(), compute(var,((Function) ex).getEx(),input));
         }
         else {
-            if (ex.)
+            if (ex.toString().equals(var)) {
+                return input;
+            }
+            else {
+                return new Variable(ex.toString());
+            }
         }
-
     }
-
-
-            (\a.\b.(a b)) (\x.x)
-
+//  (\x.(x z))
+    /*
+          parameters: String var, Expression ex, Expression input
+          example, if the whole thing was (\a.\b.(a b)) c d
+          var = a
+          ex = \b.(a b) c
+          input = f
+     */
 
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
         String input = s.nextLine();
         ArrayList<String> tokens;
         tokens = Lexer.cleanUp(input);
-        Expression ex = Parser.parse(tokens);
-        ArrayList<Variable> rightVars = getVRight(((Application)ex).getRight(),new ArrayList<>());
-        System.out.println(substituteBound(((Application) ex).getLeft(),rightVars));
 
+
+        Expression ex = parse(tokens);
+
+
+        ArrayList<Variable> rightVars = getVRight(((Application)ex).getRight(),new ArrayList<>());
+
+        Expression subbed = new Application (substituteBound(((Application) ex).getLeft(),rightVars),((Application) ex).getRight());
+
+        Expression calculated = compute(((Function)(((Application)subbed).getLeft())).getVar().toString(),((Function)(((Application)subbed).getLeft())).getEx(),((Application)subbed).getRight());
+        while (calculated instanceof Application && ((Application) calculated).getLeft() instanceof Function) {
+            calculated = compute(((Function)(((Application)calculated).getLeft())).getVar().toString(),((Function)(((Application)calculated).getLeft())).getEx(),((Application)calculated).getRight());
         }
+        System.out.println(calculated);
+    }
     }
 
